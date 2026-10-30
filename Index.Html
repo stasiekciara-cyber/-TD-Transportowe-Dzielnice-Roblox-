@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moja Strona Internetowa</title>
+    <style>
+        /* === 1. ZABEZPIECZENIE CSS (Brak możliwości zaznaczania tekstu) === */
+        body {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none;     /* IE 10+ / Edge */
+            user-select: none;         /* Standard */
+            
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        /* Zabezpieczenie przed przeciąganiem obrazków */
+        img {
+            -webkit-user-drag: none;
+            user-drag: none;
+            pointer-events: none; /* uniemożliwia interakcję z obrazkiem */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Witaj na mojej stronie!</h1>
+        <p>
+            To jest przykładowy tekst na stronie internetowej. Treść na tej stronie jest chroniona przed zaznaczaniem, kopiowaniem oraz menu pod prawym przyciskiem myszy.
+        </p>
+    </div>
+
+    <!-- === 2. ZABEZPIECZENIE JAVASCRIPT === -->
+    <script>
+        // Blokada prawego przycisku myszy (menu kontekstowego)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('Kopiowanie treści na tej stronie jest zablokowane!');
+        });
+
+        // Blokada skrótów klawiszowych (Ctrl+C, Ctrl+U, Ctrl+S, Ctrl+A, F12)
+        document.addEventListener('keydown', function(e) {
+            // Ctrl lub Cmd (dla Maca)
+            const isCtrl = e.ctrlKey || e.metaKey;
+
+            if (
+                isCtrl && (e.key === 'c' || e.key === 'C') || // Ctrl + C (Kopiuj)
+                isCtrl && (e.key === 'u' || e.key === 'U') || // Ctrl + U (Źródło strony)
+                isCtrl && (e.key === 's' || e.key === 'S') || // Ctrl + S (Zapisz stronę)
+                isCtrl && (e.key === 'a' || e.key === 'A') || // Ctrl + A (Zaznacz wszystko)
+                e.key === 'F12'                               // F12 (Narzędzia deweloperskie)
+            ) {
+                e.preventDefault();
+                alert('Skróty klawiszowe są wyłączone.');
+            }
+        });
+    </script>
+</body>
+<style>
+  /* Całkowity zakaz zaznaczania na całej stronie */
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+</style>
+
+<!-- Szybkie blokady wprost w znaczniku <body> -->
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+  <h1>Twoja treść</h1>
+  <p>Ten tekst nie daje się zaznaczyć ani skopiować.</p>
+</body>
+<script>
+  document.addEventListener('copy', function(e) {
+    const selectedText = window.getSelection().toString();
+    const copyrightNotice = "\n\nŹródło: MojaStrona.pl (Wszelkie prawa zastrzeżone)";
+    
+    e.clipboardData.setData('text/plain', selectedText + copyrightNotice);
+    e.preventDefault();
+  });
+</script>
+</html>
