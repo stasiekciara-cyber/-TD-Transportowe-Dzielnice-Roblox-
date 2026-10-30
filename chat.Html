@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okno Rozmowy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        .chat-box { width: 100%; max-width: 400px; height: 500px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { background: #2563eb; color: #fff; padding: 15px; text-align: center; font-weight: bold; }
+        
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .message { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+        .message.user { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 2px; }
+        .message.bot { align-self: flex-start; background: #e5e7eb; color: #1f2937; border-bottom-left-radius: 2px; }
+
+        .chat-input { display: flex; padding: 10px; border-top: 1px solid #e5e7eb; background: #fff; }
+        .chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 20px; outline: none; }
+        .chat-input button { margin-left: 8px; padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .chat-input button:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+
+<div class="chat-box">
+    <div class="chat-header">Rozmowa na Żywo</div>
+    <div class="chat-messages" id="messages">
+        <div class="message bot">Cześć! O czym chcesz dzisiaj porozmawiać?</div>
+    </div>
+    <form class="chat-input" id="chatForm">
+        <input type="text" id="userInput" placeholder="Napisz wiadomość..." required autocomplete="off">
+        <button type="submit">Wyślij</button>
+    </form>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const messages = document.getElementById('messages');
+
+    function appendMessage(text, sender) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender);
+        msgDiv.textContent = text;
+        messages.appendChild(msgDiv);
+        messages.scrollTop = messages.scrollHeight; // Autoscroll na dół
+    }
+
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        // Wiadomość użytkownika
+        appendMessage(text, 'user');
+        userInput.value = '';
+
+        // Symulacja odpowiedzi drugiego rozmówcy / bota po 1 sekundzie
+        setTimeout(() => {
+            appendMessage("Otrzymałem Twoją wiadomość: " + text, 'bot');
+        }, 1000);
+    });
+</script>
+
+</body>
+</html>
+  const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', (socket) => {
+    console.log('Nowy użytkownik połączył się:', socket.id);
+
+    // Odbieranie wiadomości od jednego użytkownika i wysyłanie do WSZYSTKICH
+    socket.on('chatMessage', (data) => {
+        io.emit('message', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Użytkownik rozłączył się:', socket.id);
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Serwer czatu działa na port: http://localhost:3000');
+});
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', (socket) => {
+    console.log('Nowy użytkownik połączył się:', socket.id);
+
+    // Odbieranie wiadomości od jednego użytkownika i wysyłanie do WSZYSTKICH
+    socket.on('chatMessage', (data) => {
+        io.emit('message', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Użytkownik rozłączył się:', socket.id);
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Serwer czatu działa na port: http://localhost:3000');
+});
