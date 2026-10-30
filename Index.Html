@@ -107,3 +107,304 @@
   });
 </script>
 </html>
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrum Informacji i Ogłoszeń</title>
+    <style>
+        /* === 1. ZABEZPIECZENIE ANTY-KOPIOWANIE DLA TEKSTÓW INFORMACYJNYCH === */
+        .protected-info {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 20px;
+        }
+
+        .info-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Nagłówek i szukanie */
+        .header {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar:focus {
+            border-color: #2563eb;
+        }
+
+        /* Filtry / Kategorie */
+        .categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            padding: 8px 16px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        /* Lista Informacji */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 5px solid #2563eb;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Typy ogłoszeń */
+        .info-card.important {
+            border-left-color: #ef4444; /* Czerwony pasek dla ważnych */
+            background: #fff5f5;
+        }
+
+        .info-card.warning {
+            border-left-color: #f59e0b; /* Pomarańczowy dla ostrzeżeń */
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .info-date {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .info-body {
+            line-height: 1.6;
+            color: #334155;
+            margin-bottom: 12px;
+        }
+
+        .info-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Przycisk lektora */
+        .speak-btn {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .speak-btn:hover {
+            background: #f8fafc;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body class="protected-info" oncontextmenu="return false;">
+
+<div class="info-container">
+
+    <!-- NAGŁÓWEK I WYSZUKIWARKA -->
+    <div class="header">
+        <h1>📌 Centrum Informacji i Ogłoszeń</h1>
+        <input type="text" id="searchInput" class="search-bar" placeholder="Szukaj w komunikatach..." onkeyup="filterNews()">
+    </div>
+
+    <!-- KATEGORIE / FILTRY -->
+    <div class="categories">
+        <button class="cat-btn active" onclick="filterCategory('all', this)">Wszystkie</button>
+        <button class="cat-btn" onclick="filterCategory('wazne', this)">🚨 Ważne</button>
+        <button class="cat-btn" onclick="filterCategory('aktualnosci', this)">📰 Aktualności</button>
+        <button class="cat-btn" onclick="filterCategory('regulamin', this)">📜 Regulamin</button>
+    </div>
+
+    <!-- LISTA KOMUNIKATÓW -->
+    <div class="info-list" id="infoList">
+
+        <!-- Informacja 1: Ważne -->
+        <div class="info-card important" data-category="wazne">
+            <div class="info-header">
+                <span class="info-title">🚨 Ochrona treści na stronie</span>
+                <span class="info-date">Dzisiaj, 14:30</span>
+            </div>
+            <div class="info-body">
+                Przypominamy, że wszystkie teksty oraz grafiki publikowane w tym serwisie są objęte prawami autorskimi. Kopiowanie oraz rozpowszechnianie bez zgody autora jest zabronione.
+            </div>
+            <div class="info-footer">
+                <span class="tag">Ważne</span>
+                <button class="speak-btn" onclick="speakText(this)">🔊 Przeczytaj</button>
+            </div>
+        </div>
+
+        <!-- Informacja 2: Aktualności -->
+        <div class="info-card" data-category="aktualnosci">
+            <div class="info-header">
+                <span class="info-title">🎉 Nowa wersja systemu rozszerzona</span>
+                <span class="info-date">Wczoraj, 10:15</span>
+            </div>
+            <div class="info-body">
+                Dodaliśmy nowe funkcje do naszej strony, w tym podgląd czatu na żywo, zabezpieczenia anty-kopiowania oraz lektora czytającego ogłoszenia.
+            </div>
+            <div class="info-footer">
+                <span class="tag">Aktualności</span>
+                <button class="speak-btn" onclick="speakText(this)">🔊 Przeczytaj</button>
+            </div>
+        </div>
+
+        <!-- Informacja 3: Regulamin -->
+        <div class="info-card warning" data-category="regulamin">
+            <div class="info-header">
+                <span class="info-title">📜 Zasady korzystania z portalu</span>
+                <span class="info-date">25 Października 2026</span>
+            </div>
+            <div class="info-body">
+                Uprasza się wszystkich użytkowników o zachowanie kultury osobistej w sekcji wiadomości oraz nieużywanie niedozwolonego oprogramowania.
+            </div>
+            <div class="info-footer">
+                <span class="tag">Regulamin</span>
+                <button class="speak-btn" onclick="speakText(this)">🔊 Przeczytaj</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // 1. Wyszukiwarka w czasie rzeczywistym
+    function filterNews() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.info-card');
+
+        cards.forEach(card => {
+            const title = card.querySelector('.info-title').textContent.toLowerCase();
+            const body = card.querySelector('.info-body').textContent.toLowerCase();
+            
+            if (title.includes(query) || body.includes(query)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // 2. Filtrowanie po kategoriach
+    function filterCategory(category, btn) {
+        // Zmiana aktywnego przycisku
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Filtrowanie kart
+        const cards = document.querySelectorAll('.info-card');
+        cards.forEach(card => {
+            if (category === 'all' || card.getAttribute('data-category') === category) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // 3. Lektor (Web Speech API) - Czytanie powiadomienia na głos
+    function speakText(button) {
+        const card = button.closest('.info-card');
+        const title = card.querySelector('.info-title').textContent;
+        const body = card.querySelector('.info-body').textContent;
+        
+        const fullText = title + ". " + body;
+
+        // Anulowanie poprzedniego czytania jeśli trwa
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(fullText);
+        utterance.lang = 'pl-PL'; // Język polski
+        utterance.rate = 1; // Szybkość mowy
+
+        window.speechSynthesis.speak(utterance);
+    }
+</script>
+
+</body>
+</html>
